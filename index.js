@@ -1,9 +1,11 @@
+require("dotenv").config();
 const fetch = require("node-fetch");
 
+const CF_AUTH_EMAIL = process.env.CF_AUTH_EMAIL;
 const CF_API_TOKEN = process.env.CF_API_TOKEN;
 const CF_ACCOUNT_ID = process.env.CF_ACCOUNT_ID;
-const CF_PAGES_PROJECT_NAME = process.env.CF_PAGES_PROJECT_NAME || "anderson-site";
-const MAX_ATTEMPTS = 5;
+const CF_PAGES_PROJECT_NAME = process.env.CF_PAGES_PROJECT_NAME;
+const KEEP_FIRST_N_PAGES = parseInt(process.env.KEEP_FIRST_N_PAGES || "1", 10);
 
 const sleep = (ms) =>
   new Promise((resolve) => {
@@ -11,7 +13,7 @@ const sleep = (ms) =>
   });
 
 const headers = {
-  "X-Auth-Email": "blair@andersonassociates.net",
+  "X-Auth-Email": CF_AUTH_EMAIL,
   "X-Auth-Key": CF_API_TOKEN,
 };
 
@@ -91,6 +93,7 @@ async function processAndDeleteDeployments(productionDeploymentId) {
     firstPageResult = body.result;
     totalPages = body.result_info.total_pages;
     console.log(`Total pages: ${totalPages}`);
+    console.log(`Keeping first ${KEEP_FIRST_N_PAGES} pages of deployments`);
   } catch (err) {
     console.warn(`Failed to fetch deployments for page 1.`);
     console.warn(err);
@@ -103,6 +106,14 @@ async function processAndDeleteDeployments(productionDeploymentId) {
 
   // Start from the oldest page (totalPages) and go down to 1
   outer: for (let page = totalPages; page > 0; page--) {
+    // Skip deletion for the first N pages
+    if (page <= KEEP_FIRST_N_PAGES) {
+      console.log(
+        `Skipping page ${page} as it's in the protected first ${KEEP_FIRST_N_PAGES} pages`
+      );
+      continue;
+    }
+
     let result;
     try {
       result = await listDeploymentsPerPage(page);
@@ -159,6 +170,11 @@ async function main() {
     throw new Error(
       "Please set CF_PAGES_PROJECT_NAME as an env variable to your Pages project name"
     );
+  }
+
+  // Validate KEEP_FIRST_N_PAGES
+  if (isNaN(KEEP_FIRST_N_PAGES) || KEEP_FIRST_N_PAGES < 1) {
+    throw new Error("KEEP_FIRST_N_PAGES must be a positive integer");
   }
 
   // const testList = await listDeploymentsPerPage(10);
