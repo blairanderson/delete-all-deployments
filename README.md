@@ -1,21 +1,40 @@
-# delete-all-deployments
+# Delete All Deployments
 
 A GitHub Action that deletes all Cloudflare Pages deployments for a given project, while preserving the production deployment and the most recent N pages of deployments.
 
-## Usage
+## Inputs
 
-### 1. Add Required Secrets
+### `cf_auth_email`
 
-Add these secrets to your GitHub repository:
+**Required** Your Cloudflare account email.
 
-- `CF_AUTH_EMAIL`: Your Cloudflare account email
-- `CF_API_TOKEN`: Your Cloudflare API token
-- `CF_ACCOUNT_ID`: Your Cloudflare account ID
-- `CF_PAGES_PROJECT_NAME`: The name of your Pages project
+### `cf_api_token`
 
-### 2. Create Workflow File
+**Required** Your Cloudflare API token.
 
-Create a new workflow file (e.g., `.github/workflows/cleanup-deployments.yml`):
+### `cf_account_id`
+
+**Required** Your Cloudflare account ID.
+
+### `cf_pages_project_name`
+
+**Required** The name of your Pages project.
+
+### `keep_first_n_pages`
+
+**Optional** Number of most recent pages of deployments to keep. Default `"1"`.
+
+### `max_deletes`
+
+**Optional** Maximum number of deployments to delete in one run. Default `"10"`.
+
+## Outputs
+
+### `deleted_count`
+
+The number of deployments that were deleted in this run.
+
+## Example usage
 
 ```yaml
 name: Cleanup Deployments
@@ -37,20 +56,18 @@ jobs:
           cf_api_token: ${{ secrets.CF_API_TOKEN }}
           cf_account_id: ${{ secrets.CF_ACCOUNT_ID }}
           cf_pages_project_name: ${{ secrets.CF_PAGES_PROJECT_NAME }}
-          # Optional: Number of most recent pages to keep (default: 1)
           keep_first_n_pages: 1
-          # Optional: Maximum number of deployments to delete in one run (default: 10)
           max_deletes: 10
 ```
 
-### Configuration Options
+## Required Secrets
 
-- `cf_auth_email` (required): Your Cloudflare account email
-- `cf_api_token` (required): Your Cloudflare API token
-- `cf_account_id` (required): Your Cloudflare account ID
-- `cf_pages_project_name` (required): The name of your Pages project
-- `keep_first_n_pages` (optional): Number of most recent pages of deployments to keep (default: 1)
-- `max_deletes` (optional): Maximum number of deployments to delete in one run (default: 10)
+Add these secrets to your GitHub repository:
+
+- `CF_AUTH_EMAIL`: Your Cloudflare account email
+- `CF_API_TOKEN`: Your Cloudflare API token
+- `CF_ACCOUNT_ID`: Your Cloudflare account ID
+- `CF_PAGES_PROJECT_NAME`: The name of your Pages project
 
 ## Development
 
@@ -67,9 +84,7 @@ CF_AUTH_EMAIL=your-email@example.com
 CF_API_TOKEN=your-api-token
 CF_ACCOUNT_ID=your-account-id
 CF_PAGES_PROJECT_NAME=your-project-name
-# Optional: Number of most recent pages to keep (default: 1)
 KEEP_FIRST_N_PAGES=1
-# Optional: Maximum number of deployments to delete in one run (default: 10)
 MAX_DELETES=10
 ```
 
