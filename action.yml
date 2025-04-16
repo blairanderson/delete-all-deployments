@@ -1,0 +1,31 @@
+name: "Cloudflare Pages Deployment Cleanup"
+description: "Automatically cleans up old Cloudflare Pages deployments while keeping the production deployment safe"
+inputs:
+  cloudflare-auth-email:
+    description: "Cloudflare account email address"
+    required: true
+  cloudflare-api-token:
+    description: "Cloudflare API token with Pages:Edit permissions"
+    required: true
+  cloudflare-account-id:
+    description: "Cloudflare account ID"
+    required: true
+  cloudflare-project-name:
+    description: "Name of the Cloudflare Pages project"
+    required: true
+  keep-first-n-pages:
+    description: "Number of most recent deployment pages to keep (default: 1)"
+    required: false
+    default: "1"
+  max-deletes:
+    description: "Maximum number of deployments to delete in one run (default: 10)"
+    required: false
+    default: "10"
+outputs:
+  deleted-count:
+    description: "Number of deployments that were deleted"
+  total-processed:
+    description: "Total number of deployments that were processed"
+runs:
+  using: "node20"
+  main: "index.js"
