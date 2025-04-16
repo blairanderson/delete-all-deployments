@@ -6,6 +6,7 @@ const CF_API_TOKEN = process.env.CF_API_TOKEN;
 const CF_ACCOUNT_ID = process.env.CF_ACCOUNT_ID;
 const CF_PAGES_PROJECT_NAME = process.env.CF_PAGES_PROJECT_NAME;
 const KEEP_FIRST_N_PAGES = parseInt(process.env.KEEP_FIRST_N_PAGES || "1", 10);
+const MAX_DELETES = parseInt(process.env.MAX_DELETES || "10", 10);
 
 const sleep = (ms) =>
   new Promise((resolve) => {
@@ -102,7 +103,6 @@ async function processAndDeleteDeployments(productionDeploymentId) {
 
   let total = 0;
   let deleted = 0;
-  const MAX_DELETES = 10;
 
   // Start from the oldest page (totalPages) and go down to 1
   outer: for (let page = totalPages; page > 0; page--) {

@@ -39,6 +39,8 @@ jobs:
           cf_pages_project_name: ${{ secrets.CF_PAGES_PROJECT_NAME }}
           # Optional: Number of most recent pages to keep (default: 1)
           keep_first_n_pages: 1
+          # Optional: Maximum number of deployments to delete in one run (default: 10)
+          max_deletes: 10
 ```
 
 ### Configuration Options
@@ -48,6 +50,7 @@ jobs:
 - `cf_account_id` (required): Your Cloudflare account ID
 - `cf_pages_project_name` (required): The name of your Pages project
 - `keep_first_n_pages` (optional): Number of most recent pages of deployments to keep (default: 1)
+- `max_deletes` (optional): Maximum number of deployments to delete in one run (default: 10)
 
 ## Development
 
@@ -66,6 +69,8 @@ CF_ACCOUNT_ID=your-account-id
 CF_PAGES_PROJECT_NAME=your-project-name
 # Optional: Number of most recent pages to keep (default: 1)
 KEEP_FIRST_N_PAGES=1
+# Optional: Maximum number of deployments to delete in one run (default: 10)
+MAX_DELETES=10
 ```
 
 3. Install dependencies and run:
